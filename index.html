@@ -75,6 +75,9 @@
       text-transform: uppercase;
     }
 
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .language-button { min-height: 34px; padding: 0 10px; }
+
     main {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 260px;
@@ -281,57 +284,60 @@
         <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
         BLOCKFALL
       </div>
-      <div class="header-note">A little brain break</div>
+      <div class="header-actions">
+        <div class="header-note" data-i18n="headerNote">A little brain break</div>
+        <button class="btn language-button" id="language-button" type="button" aria-label="Switch language to French">Français</button>
+      </div>
     </header>
 
     <main>
-      <section aria-label="Tetris game">
+      <section aria-label="Tetris game" data-i18n-aria-label="gameSection">
         <div class="game-shell">
           <div class="board-wrap">
-            <canvas id="board" width="300" height="600" aria-label="Tetris game board"></canvas>
+            <canvas id="board" width="300" height="600" aria-label="Tetris game board" data-i18n-aria-label="gameBoard"></canvas>
             <div class="overlay" id="overlay">
               <div class="overlay-card">
-                <p class="overlay-kicker">Ready when you are</p>
+                <p class="overlay-kicker" data-i18n="overlayKicker">Ready when you are</p>
                 <h2 id="overlay-title">Blockfall</h2>
-                <p id="overlay-copy">Stack the shapes, clear the lines, and see how long you can last.</p>
-                <button class="btn btn-primary" id="start-button">Start game</button>
+                <p id="overlay-copy" data-i18n="readyCopy">Stack the shapes, clear the lines, and see how long you can last.</p>
+                <button class="btn btn-primary" id="start-button" data-i18n="startGame">Start game</button>
               </div>
             </div>
           </div>
         </div>
-        <div class="touch-controls" aria-label="Touch controls">
-          <button class="btn" data-action="left" aria-label="Move left">←</button>
-          <button class="btn" data-action="rotate" aria-label="Rotate">↻</button>
-          <button class="btn" data-action="right" aria-label="Move right">→</button>
-          <button class="btn" data-action="down" aria-label="Move down">↓</button>
-          <button class="btn drop" data-action="drop">Hard drop</button>
+        <div class="touch-controls" aria-label="Touch controls" data-i18n-aria-label="touchControls">
+          <button class="btn" data-action="left" aria-label="Move left" data-i18n-aria-label="moveLeft">←</button>
+          <button class="btn" data-action="rotate" aria-label="Rotate" data-i18n-aria-label="rotate">↻</button>
+          <button class="btn" data-action="right" aria-label="Move right" data-i18n-aria-label="moveRight">→</button>
+          <button class="btn" data-action="down" aria-label="Move down" data-i18n-aria-label="moveDown">↓</button>
+          <button class="btn drop" data-action="drop" data-i18n="hardDrop">Hard drop</button>
         </div>
       </section>
 
-      <aside class="side" aria-label="Game information">
+      <aside class="side" aria-label="Game information" data-i18n-aria-label="gameInformation">
         <div class="stats">
-          <div class="card"><span class="stat-label">Score</span><strong class="stat-value" id="score">0</strong></div>
-          <div class="card"><span class="stat-label">Best</span><strong class="stat-value" id="best">0</strong></div>
-          <div class="card"><span class="stat-label">Lines</span><strong class="stat-value" id="lines">0</strong></div>
-          <div class="card"><span class="stat-label">Level</span><strong class="stat-value" id="level">1</strong></div>
+          <div class="card"><span class="stat-label" data-i18n="score">Score</span><strong class="stat-value" id="score">0</strong></div>
+          <div class="card"><span class="stat-label" data-i18n="best">Best</span><strong class="stat-value" id="best">0</strong></div>
+          <div class="card"><span class="stat-label" data-i18n="lines">Lines</span><strong class="stat-value" id="lines">0</strong></div>
+          <div class="card"><span class="stat-label" data-i18n="level">Level</span><strong class="stat-value" id="level">1</strong></div>
         </div>
 
         <div class="card next-card">
-          <span class="section-label">Up next</span>
-          <canvas id="next" width="220" height="92" aria-label="Next tetromino"></canvas>
+          <span class="section-label" data-i18n="upNext">Up next</span>
+          <canvas id="next" width="220" height="92" aria-label="Next tetromino" data-i18n-aria-label="nextPiece"></canvas>
         </div>
 
         <div class="actions">
-          <button class="btn btn-primary" id="restart-button">New game</button>
-          <button class="btn" id="pause-button" aria-pressed="false">Pause</button>
+          <button class="btn btn-primary" id="restart-button" data-i18n="newGame">New game</button>
+          <button class="btn" id="pause-button" aria-pressed="false" data-i18n="pause">Pause</button>
         </div>
 
         <div class="card controls-card">
-          <span class="section-label">How to play</span>
-          <div class="control-row"><span>Move</span><span class="key-group"><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></span></div>
-          <div class="control-row"><span>Rotate</span><kbd>↑</kbd></div>
-          <div class="control-row"><span>Hard drop</span><kbd>SPACE</kbd></div>
-          <div class="control-row"><span>Pause</span><kbd>P</kbd></div>
+          <span class="section-label" data-i18n="howToPlay">How to play</span>
+          <div class="control-row"><span data-i18n="move">Move</span><span class="key-group"><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></span></div>
+          <div class="control-row"><span data-i18n="rotate">Rotate</span><kbd>↑</kbd></div>
+          <div class="control-row"><span data-i18n="hardDrop">Hard drop</span><kbd data-i18n="space">SPACE</kbd></div>
+          <div class="control-row"><span data-i18n="pause">Pause</span><kbd>P</kbd></div>
         </div>
       </aside>
     </main>
@@ -348,7 +354,7 @@
 <!-- END AADS AD UNIT 2457698 -->
 
         <br>
-        Made for one more round. By <a href="https://toogreen.ca" target="_blank" rel="noopener">toogreen.ca</a>
+        <span data-i18n="footerNote">Made for one more round. By</span> <a href="https://toogreen.ca" target="_blank" rel="noopener">toogreen.ca</a>
         <br>
 
 
@@ -379,6 +385,80 @@
         J: [[1, 0, 0], [1, 1, 1]],
         L: [[0, 0, 1], [1, 1, 1]]
       };
+      const translations = {
+        en: {
+          pageTitle: "Blockfall — Tetris",
+          headerNote: "A little brain break",
+          switchLanguage: "Switch language to French",
+          gameSection: "Tetris game",
+          gameBoard: "Tetris game board",
+          overlayKicker: "Ready when you are",
+          readyTitle: "Blockfall",
+          readyCopy: "Stack the shapes, clear the lines, and see how long you can last.",
+          startGame: "Start game",
+          playAgain: "Play again",
+          pausedTitle: "Paused",
+          pausedCopy: "Take a breath. Your blocks will be right here.",
+          gameOverTitle: "Game over",
+          gameOverCopy: score => `You scored ${score} points. Ready for another round?`,
+          resume: "Resume",
+          pause: "Pause",
+          touchControls: "Touch controls",
+          moveLeft: "Move left",
+          rotate: "Rotate",
+          moveRight: "Move right",
+          moveDown: "Move down",
+          hardDrop: "Hard drop",
+          gameInformation: "Game information",
+          score: "Score",
+          best: "Best",
+          lines: "Lines",
+          level: "Level",
+          upNext: "Up next",
+          nextPiece: "Next tetromino",
+          newGame: "New game",
+          howToPlay: "How to play",
+          move: "Move",
+          space: "SPACE",
+          footerNote: "Made for one more round. By"
+        },
+        fr: {
+          pageTitle: "Blockfall — Tetris",
+          headerNote: "Une petite pause pour l'esprit",
+          switchLanguage: "Passer la langue en anglais",
+          gameSection: "Jeu de Tetris",
+          gameBoard: "Plateau de Tetris",
+          overlayKicker: "Prêt quand vous l'êtes",
+          readyTitle: "Blockfall",
+          readyCopy: "Empilez les pièces, complétez les lignes et tenez le plus longtemps possible.",
+          startGame: "Commencer",
+          playAgain: "Rejouer",
+          pausedTitle: "En pause",
+          pausedCopy: "Prenez votre temps. Vos pièces vous attendent.",
+          gameOverTitle: "Partie terminée",
+          gameOverCopy: score => `Vous avez marqué ${score} points. Prêt pour une autre partie ?`,
+          resume: "Reprendre",
+          pause: "Pause",
+          touchControls: "Commandes tactiles",
+          moveLeft: "Déplacer à gauche",
+          rotate: "Pivoter",
+          moveRight: "Déplacer à droite",
+          moveDown: "Déplacer vers le bas",
+          hardDrop: "Chute rapide",
+          gameInformation: "Informations de jeu",
+          score: "Score",
+          best: "Record",
+          lines: "Lignes",
+          level: "Niveau",
+          upNext: "À venir",
+          nextPiece: "Prochaine pièce",
+          newGame: "Nouvelle partie",
+          howToPlay: "Comment jouer",
+          move: "Déplacer",
+          space: "ESPACE",
+          footerNote: "Fait pour une autre partie. Par"
+        }
+      };
       const boardCanvas = document.getElementById("board");
       const boardContext = boardCanvas.getContext("2d");
       const nextCanvas = document.getElementById("next");
@@ -392,7 +472,10 @@
       const bestElement = document.getElementById("best");
       const linesElement = document.getElementById("lines");
       const levelElement = document.getElementById("level");
+      const languageButton = document.getElementById("language-button");
 
+      let language = "en";
+      let overlayState = "ready";
       let board;
       let current;
       let nextType;
@@ -406,6 +489,53 @@
       let lastTime = 0;
       let dropCounter = 0;
       let dropInterval = 850;
+
+      function formatNumber(value) {
+        return value.toLocaleString(language === "fr" ? "fr-FR" : "en-US");
+      }
+
+      function getInitialLanguage() {
+        try {
+          const savedLanguage = localStorage.getItem("blockfall-language");
+          if (savedLanguage === "en" || savedLanguage === "fr") return savedLanguage;
+        } catch (error) {
+          console.warn("Language preference could not be loaded.", error);
+        }
+        return navigator.language.toLowerCase().startsWith("fr") ? "fr" : "en";
+      }
+
+      function renderOverlay() {
+        const text = translations[language];
+        const states = {
+          ready: [text.readyTitle, text.readyCopy, text.startGame],
+          paused: [text.pausedTitle, text.pausedCopy, text.resume],
+          gameOver: [text.gameOverTitle, text.gameOverCopy(formatNumber(score)), text.playAgain]
+        };
+        [overlayTitle.textContent, overlayCopy.textContent, startButton.textContent] = states[overlayState];
+      }
+
+      function setLanguage(nextLanguage) {
+        language = nextLanguage;
+        const text = translations[language];
+        document.documentElement.lang = language;
+        document.title = text.pageTitle;
+        document.querySelectorAll("[data-i18n]").forEach(element => {
+          element.textContent = text[element.dataset.i18n];
+        });
+        document.querySelectorAll("[data-i18n-aria-label]").forEach(element => {
+          element.setAttribute("aria-label", text[element.dataset.i18nAriaLabel]);
+        });
+        languageButton.textContent = language === "en" ? "Français" : "English";
+        languageButton.setAttribute("aria-label", text.switchLanguage);
+        pauseButton.textContent = paused ? text.resume : text.pause;
+        if (!overlay.hidden) renderOverlay();
+        updateStats();
+        try {
+          localStorage.setItem("blockfall-language", language);
+        } catch (error) {
+          console.warn("Language preference could not be saved.", error);
+        }
+      }
 
       try {
         best = Number(localStorage.getItem("blockfall-best")) || 0;
@@ -517,12 +647,12 @@
       }
 
       function updateStats() {
-        scoreElement.textContent = score.toLocaleString();
-        linesElement.textContent = lines;
+        scoreElement.textContent = formatNumber(score);
+        linesElement.textContent = formatNumber(lines);
         levelElement.textContent = level;
         if (score > best) {
           best = score;
-          bestElement.textContent = best.toLocaleString();
+          bestElement.textContent = formatNumber(best);
           try {
             localStorage.setItem("blockfall-best", String(best));
           } catch (error) {
@@ -626,7 +756,7 @@
         active = true;
         paused = false;
         gameOver = false;
-        pauseButton.textContent = "Pause";
+        pauseButton.textContent = translations[language].pause;
         pauseButton.setAttribute("aria-pressed", "false");
         updateStats();
         overlay.hidden = true;
@@ -637,21 +767,19 @@
       function endGame() {
         active = false;
         gameOver = true;
-        overlayTitle.textContent = "Game over";
-        overlayCopy.textContent = `You scored ${score.toLocaleString()} points. Ready for another round?`;
-        startButton.textContent = "Play again";
+        overlayState = "gameOver";
+        renderOverlay();
         overlay.hidden = false;
       }
 
       function togglePause() {
         if (!active || gameOver) return;
         paused = !paused;
-        pauseButton.textContent = paused ? "Resume" : "Pause";
+        pauseButton.textContent = paused ? translations[language].resume : translations[language].pause;
         pauseButton.setAttribute("aria-pressed", String(paused));
         if (paused) {
-          overlayTitle.textContent = "Paused";
-          overlayCopy.textContent = "Take a breath. Your blocks will be right here.";
-          startButton.textContent = "Resume";
+          overlayState = "paused";
+          renderOverlay();
           overlay.hidden = false;
         } else {
           overlay.hidden = true;
@@ -703,8 +831,10 @@
       });
       document.getElementById("restart-button").addEventListener("click", startGame);
       pauseButton.addEventListener("click", togglePause);
+      languageButton.addEventListener("click", () => setLanguage(language === "en" ? "fr" : "en"));
 
-      bestElement.textContent = best.toLocaleString();
+      bestElement.textContent = formatNumber(best);
+      setLanguage(getInitialLanguage());
       board = makeBoard();
       nextType = randomType();
       drawNext();
