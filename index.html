@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="description" content="A little brain break. Stack the shapes and clear the lines.">
   <meta name="theme-color" content="#10121c">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Blockfall">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" href="./icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   <title>Blockfall — Tetris</title>
   <style>
     :root {
@@ -24,10 +29,20 @@
 
     * { box-sizing: border-box; }
 
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      overscroll-behavior: none;
+    }
+
     body {
       min-width: 320px;
       min-height: 100vh;
+      min-height: 100dvh;
       margin: 0;
+      overscroll-behavior: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
       background:
         radial-gradient(ellipse at 50% 5%, #272b3d 0, transparent 42rem),
         var(--bg);
@@ -38,10 +53,11 @@
     button { font: inherit; }
 
     .app {
-      width: min(100% - 32px, 900px);
+      width: min(100% - 32px - env(safe-area-inset-left) - env(safe-area-inset-right), 900px);
       min-height: 100vh;
+      min-height: 100dvh;
       margin: 0 auto;
-      padding: 28px 0 32px;
+      padding: calc(28px + env(safe-area-inset-top)) 0 calc(32px + env(safe-area-inset-bottom));
       display: flex;
       flex-direction: column;
     }
@@ -81,7 +97,35 @@
     }
 
     .header-actions { display: flex; align-items: center; gap: 12px; }
-    .language-button { min-height: 34px; padding: 0 10px; }
+    .language-button, .install-button { min-height: 34px; padding: 0 10px; }
+    .install-button[hidden] { display: none; }
+
+    main, .touch-controls, header {
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: calc(100% - 24px);
+      padding: 10px 10px 10px 16px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--panel-light);
+      box-shadow: 0 16px 40px #0008;
+      font-size: 13px;
+      transform: translateX(-50%);
+    }
+
+    .toast[hidden] { display: none; }
+    .toast .btn { min-height: 34px; }
 
     main {
       display: grid;
@@ -104,6 +148,7 @@
 
     .board-wrap {
       position: relative;
+      touch-action: none;
       overflow: hidden;
       width: 100%;
       aspect-ratio: 1 / 2;
@@ -143,6 +188,9 @@
 
     .overlay h2 { margin: 0 0 8px; font-size: 27px; letter-spacing: -.05em; }
     .overlay p { margin: 0 0 18px; color: #b5bbce; font-size: 13px; line-height: 1.6; }
+    .overlay .overlay-hint { display: none; margin-top: -8px; color: var(--muted); font-size: 11px; }
+    @media (pointer: coarse) { .overlay .overlay-hint { display: block; } }
+    .overlay .overlay-hint[hidden] { display: none; }
 
     .side {
       display: grid;
@@ -243,7 +291,7 @@
       margin-top: 12px;
     }
 
-    .touch-controls .btn { min-height: 48px; font-size: 18px; touch-action: manipulation; }
+    .touch-controls .btn { min-height: 48px; font-size: 18px; touch-action: none; }
     .touch-controls .drop { grid-column: span 2; font-size: 12px; }
 
     footer {
@@ -255,11 +303,20 @@
     }
 
     @media (max-width: 680px) {
-      .app { width: min(100% - 24px, 430px); padding-top: 18px; }
+      .app {
+        width: min(100% - 24px - env(safe-area-inset-left) - env(safe-area-inset-right), 430px);
+        padding-top: calc(18px + env(safe-area-inset-top));
+      }
       header { margin-bottom: 15px; }
       .header-note { display: none; }
       main { grid-template-columns: minmax(0, 1fr) 112px; gap: 10px; align-items: start; }
-      .game-shell { width: 100%; padding: 7px; border-radius: 10px; }
+      .game-shell {
+        /* Keep the whole board plus controls on screen without scrolling. */
+        width: min(100%, calc((100dvh - 214px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 2 + 14px));
+        justify-self: center;
+        padding: 7px;
+        border-radius: 10px;
+      }
       .side { gap: 8px; }
       .stats { grid-template-columns: 1fr; gap: 7px; }
       .card { padding: 10px; border-radius: 9px; }
@@ -279,6 +336,7 @@
       .brand { font-size: 16px; }
       .touch-controls { gap: 6px; }
       .touch-controls .btn { min-height: 44px; }
+      .language-button, .install-button { padding: 0 8px; font-size: 11px; }
     }
   </style>
 </head>
@@ -291,6 +349,7 @@
       </div>
       <div class="header-actions">
         <div class="header-note" data-i18n="headerNote">A little brain break</div>
+        <button class="btn install-button" id="install-button" type="button" data-i18n="install" hidden>Install</button>
         <button class="btn language-button" id="language-button" type="button" aria-label="Switch language to French">Français</button>
       </div>
     </header>
@@ -305,6 +364,7 @@
                 <p class="overlay-kicker" data-i18n="overlayKicker">Ready when you are</p>
                 <h2 id="overlay-title">Blockfall</h2>
                 <p id="overlay-copy" data-i18n="readyCopy">Stack the shapes, clear the lines, and see how long you can last.</p>
+                <p class="overlay-hint" id="overlay-hint" data-i18n="gestureHint">Swipe to move, tap to rotate, flick down to drop.</p>
                 <button class="btn btn-primary" id="start-button" data-i18n="startGame">Start game</button>
               </div>
             </div>
@@ -367,6 +427,11 @@
     </footer>
   </div>
 
+  <div class="toast" id="update-toast" role="status" hidden>
+    <span data-i18n="updateReady">A new version is ready.</span>
+    <button class="btn btn-primary" id="update-button" type="button" data-i18n="update">Update</button>
+  </div>
+
   <script>
     (() => {
       const COLS = 10;
@@ -425,7 +490,11 @@
           howToPlay: "How to play",
           move: "Move",
           space: "SPACE",
-          footerNote: "Made for one more round. By"
+          footerNote: "Made for one more round. By",
+          install: "Install",
+          updateReady: "A new version is ready.",
+          update: "Update",
+          gestureHint: "Swipe to move, tap to rotate, flick down to drop."
         },
         fr: {
           pageTitle: "Blockfall — Tetris",
@@ -461,7 +530,11 @@
           howToPlay: "Comment jouer",
           move: "Déplacer",
           space: "ESPACE",
-          footerNote: "Fait pour une autre partie. Par"
+          footerNote: "Fait pour une autre partie. Par",
+          install: "Installer",
+          updateReady: "Une nouvelle version est prête.",
+          update: "Mettre à jour",
+          gestureHint: "Glissez pour déplacer, touchez pour pivoter, balayez vers le bas pour lâcher."
         }
       };
       const boardCanvas = document.getElementById("board");
@@ -472,12 +545,17 @@
       const overlayTitle = document.getElementById("overlay-title");
       const overlayCopy = document.getElementById("overlay-copy");
       const startButton = document.getElementById("start-button");
+      const overlayHint = document.getElementById("overlay-hint");
       const pauseButton = document.getElementById("pause-button");
       const scoreElement = document.getElementById("score");
       const bestElement = document.getElementById("best");
       const linesElement = document.getElementById("lines");
       const levelElement = document.getElementById("level");
       const languageButton = document.getElementById("language-button");
+      const installButton = document.getElementById("install-button");
+      const updateToast = document.getElementById("update-toast");
+      const updateButton = document.getElementById("update-button");
+      const boardWrap = document.querySelector(".board-wrap");
 
       let language = "en";
       let overlayState = "ready";
@@ -494,6 +572,8 @@
       let lastTime = 0;
       let dropCounter = 0;
       let dropInterval = 850;
+      let wakeLock = null;
+      let installPrompt = null;
 
       function formatNumber(value) {
         return value.toLocaleString(language === "fr" ? "fr-FR" : "en-US");
@@ -517,6 +597,7 @@
           gameOver: [text.gameOverTitle, text.gameOverCopy(formatNumber(score)), text.playAgain]
         };
         [overlayTitle.textContent, overlayCopy.textContent, startButton.textContent] = states[overlayState];
+        overlayHint.hidden = overlayState !== "ready";
       }
 
       function setLanguage(nextLanguage) {
@@ -546,6 +627,27 @@
         best = Number(localStorage.getItem("blockfall-best")) || 0;
       } catch (error) {
         console.warn("Best score could not be loaded.", error);
+      }
+
+      function buzz(pattern) {
+        if (navigator.vibrate) navigator.vibrate(pattern);
+      }
+
+      // Keep the screen awake only while a game is actually running.
+      async function updateWakeLock() {
+        if (!("wakeLock" in navigator)) return;
+        const shouldHold = active && !paused && !gameOver && document.visibilityState === "visible";
+        try {
+          if (shouldHold && !wakeLock) {
+            wakeLock = await navigator.wakeLock.request("screen");
+            wakeLock.addEventListener("release", () => { wakeLock = null; });
+          } else if (!shouldHold && wakeLock) {
+            await wakeLock.release();
+            wakeLock = null;
+          }
+        } catch (error) {
+          console.warn("Screen wake lock is unavailable.", error);
+        }
       }
 
       function makeBoard() {
@@ -625,6 +727,7 @@
           level = Math.floor(lines / 10) + 1;
           dropInterval = Math.max(100, 850 - (level - 1) * 65);
           updateStats();
+          buzz(cleared >= 4 ? [30, 40, 30, 40, 60] : 20 * cleared);
         }
         spawnPiece();
       }
@@ -647,6 +750,7 @@
         }
         score += distance * 2;
         updateStats();
+        buzz(12);
         lockPiece();
         draw();
       }
@@ -767,6 +871,7 @@
         overlay.hidden = true;
         spawnPiece();
         draw();
+        updateWakeLock();
       }
 
       function endGame() {
@@ -775,6 +880,8 @@
         overlayState = "gameOver";
         renderOverlay();
         overlay.hidden = false;
+        buzz([40, 60, 80]);
+        updateWakeLock();
       }
 
       function togglePause() {
@@ -789,6 +896,7 @@
         } else {
           overlay.hidden = true;
         }
+        updateWakeLock();
       }
 
       function handleAction(action) {
@@ -827,8 +935,100 @@
         handleAction(action);
       });
 
+      // Touch buttons fire on press (not release) and auto-repeat while held.
+      const REPEATABLE = new Set(["left", "right", "down"]);
       document.querySelectorAll("[data-action]").forEach(button => {
-        button.addEventListener("click", () => handleAction(button.dataset.action));
+        const action = button.dataset.action;
+        let delayTimer;
+        let repeatTimer;
+        const stopRepeat = () => {
+          clearTimeout(delayTimer);
+          clearInterval(repeatTimer);
+        };
+        button.addEventListener("pointerdown", event => {
+          event.preventDefault();
+          button.setPointerCapture(event.pointerId);
+          handleAction(action);
+          if (!REPEATABLE.has(action)) return;
+          stopRepeat();
+          delayTimer = setTimeout(() => {
+            repeatTimer = setInterval(() => handleAction(action), action === "down" ? 45 : 75);
+          }, 170);
+        });
+        ["pointerup", "pointercancel", "lostpointercapture"].forEach(type => button.addEventListener(type, stopRepeat));
+        // Keyboard activation (Enter/Space on a focused button) still works.
+        button.addEventListener("click", event => {
+          if (event.detail === 0) handleAction(action);
+        });
+        button.addEventListener("contextmenu", event => event.preventDefault());
+      });
+
+      // Board gestures: drag to move/soft drop, tap to rotate, quick flick down to hard drop.
+      let gesture = null;
+      boardWrap.addEventListener("pointerdown", event => {
+        if (event.pointerType === "mouse" || !overlay.hidden || !active || paused || gameOver) return;
+        boardWrap.setPointerCapture(event.pointerId);
+        gesture = {
+          id: event.pointerId,
+          piece: current,
+          startX: event.clientX,
+          startY: event.clientY,
+          lastX: event.clientX,
+          lastY: event.clientY,
+          time: event.timeStamp,
+          moved: false
+        };
+      });
+      boardWrap.addEventListener("pointermove", event => {
+        if (!gesture || event.pointerId !== gesture.id || gesture.piece !== current) return;
+        const cell = boardWrap.clientWidth / COLS;
+        while (Math.abs(event.clientX - gesture.lastX) >= cell) {
+          const direction = Math.sign(event.clientX - gesture.lastX);
+          handleAction(direction > 0 ? "right" : "left");
+          gesture.lastX += direction * cell;
+          gesture.moved = true;
+        }
+        while (event.clientY - gesture.lastY >= cell && gesture.piece === current) {
+          handleAction("down");
+          gesture.lastY += cell;
+          gesture.moved = true;
+        }
+      });
+      boardWrap.addEventListener("pointerup", event => {
+        if (!gesture || event.pointerId !== gesture.id) return;
+        const cell = boardWrap.clientWidth / COLS;
+        const dx = event.clientX - gesture.startX;
+        const dy = event.clientY - gesture.startY;
+        const elapsed = event.timeStamp - gesture.time;
+        if (gesture.piece === current) {
+          if (dy > cell * 2.5 && dy > Math.abs(dx) * 1.5 && elapsed < 260) handleAction("drop");
+          else if (!gesture.moved && elapsed < 300) handleAction("rotate");
+        }
+        gesture = null;
+      });
+      boardWrap.addEventListener("pointercancel", () => { gesture = null; });
+
+      // Pause automatically when the app is backgrounded or the phone locks.
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden" && active && !paused && !gameOver) togglePause();
+        updateWakeLock();
+      });
+
+      window.addEventListener("beforeinstallprompt", event => {
+        event.preventDefault();
+        installPrompt = event;
+        installButton.hidden = false;
+      });
+      installButton.addEventListener("click", async () => {
+        if (!installPrompt) return;
+        installPrompt.prompt();
+        await installPrompt.userChoice;
+        installPrompt = null;
+        installButton.hidden = true;
+      });
+      window.addEventListener("appinstalled", () => {
+        installPrompt = null;
+        installButton.hidden = true;
       });
       startButton.addEventListener("click", () => {
         if (paused) togglePause();
@@ -845,15 +1045,51 @@
       drawNext();
       draw();
       requestAnimationFrame(frame);
-    })();
 
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js").catch(error => {
-          console.warn("Offline support could not be enabled.", error);
+      if (new URLSearchParams(location.search).get("action") === "play") startGame();
+
+      if ("serviceWorker" in navigator) {
+        let waitingWorker = null;
+        let reloadOnUpdate = false;
+
+        const offerUpdate = worker => {
+          // Only prompt when replacing an existing version, not on first install.
+          if (!navigator.serviceWorker.controller) return;
+          waitingWorker = worker;
+          updateToast.hidden = false;
+        };
+
+        updateButton.addEventListener("click", () => {
+          if (!waitingWorker) return;
+          reloadOnUpdate = true;
+          updateToast.hidden = true;
+          waitingWorker.postMessage("skipWaiting");
         });
-      });
-    }
+
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          if (reloadOnUpdate) location.reload();
+        });
+
+        window.addEventListener("load", async () => {
+          try {
+            const registration = await navigator.serviceWorker.register("./sw.js");
+            if (registration.waiting) offerUpdate(registration.waiting);
+            registration.addEventListener("updatefound", () => {
+              const worker = registration.installing;
+              if (!worker) return;
+              worker.addEventListener("statechange", () => {
+                if (worker.state === "installed") offerUpdate(worker);
+              });
+            });
+            document.addEventListener("visibilitychange", () => {
+              if (document.visibilityState === "visible") registration.update().catch(() => {});
+            });
+          } catch (error) {
+            console.warn("Offline support could not be enabled.", error);
+          }
+        });
+      }
+    })();
   </script>
 </body>
 </html>
